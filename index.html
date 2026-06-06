@@ -1,0 +1,2047 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KNLTB Rating Berekenen | RacketRating Calculator</title>
+  <meta name="description" content="Bereken je tennisrating, padelrating en andere racketratings na winst of verlies. Inclusief KNLTB DSS, dubbels, toernooi-inzicht en duidelijke uitleg.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="author" content="RacketRating Calculator">
+  <link rel="canonical" href="https://www.racketratingcalculator.nl/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="nl_NL">
+  <meta property="og:title" content="RacketRating Calculator - KNLTB rating en racketrating berekenen">
+  <meta property="og:description" content="Gebruiksvriendelijke rekentool voor tennisrating, padelrating en andere racketsport-ratings. Vul spelers in en zie direct je nieuwe rating.">
+  <meta property="og:url" content="https://www.racketratingcalculator.nl/">
+  <meta name="twitter:card" content="summary">
+  <meta name="theme-color" content="#0b5d8f">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "RacketRating Calculator",
+    "alternateName": ["KNLTB rating calculator", "Tennisrating calculator", "Racket rating rekentool"],
+    "url": "https://www.racketratingcalculator.nl/",
+    "applicationCategory": "SportsApplication",
+    "operatingSystem": "All",
+    "inLanguage": "nl-NL",
+    "description": "Gebruiksvriendelijke online rekentool om tennisratings, padelratings en andere racketratings na winst of verlies te berekenen.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "EUR"
+    },
+    "featureList": [
+      "KNLTB tennisrating berekenen voor enkelspel",
+      "KNLTB dubbelrating berekenen",
+      "Padelrating indicatie berekenen",
+      "Tafeltennisrating berekenen",
+      "Squash, badminton en pickleball hulpmiddelen",
+      "Lokale historie en CSV-export"
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Kan ik mijn KNLTB rating berekenen na een wedstrijd?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ja. Met de RacketRating Calculator vul je je rating, de rating van je tegenstander en de winnaar in. De tool berekent vervolgens de verwachte nieuwe tennisrating."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is de berekende rating officieel?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nee. De tool is een hulpmiddel. Alleen de bond of het officiële ratingsysteem bepaalt de definitieve rating. Bij tennis volgt de tool de openbare DSS-rekenlogica; bij sommige andere sporten gaat het om een indicatie."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Kan ik ook dubbelspel en padel berekenen?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ja. De calculator ondersteunt enkelspel en dubbelspel voor tennis, en geeft voor padel een duidelijke indicatie waarbij de uitslag kan worden meegenomen."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Waarom is dit handig tijdens een toernooi?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Tijdens een toernooi kan je rating feitelijk veranderen na iedere gespeelde partij, terwijl de officiële weergave vaak later wordt bijgewerkt. Deze tool helpt om dat effect direct te zien."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    :root {
+      --bg: #f5f8fb;
+      --ink: #102033;
+      --muted: #607086;
+      --card: #ffffff;
+      --line: #d9e3ec;
+      --brand: #0b5d8f;
+      --brand-2: #10a37f;
+      --brand-3: #ffc857;
+      --soft-blue: #eaf5ff;
+      --soft-green: #eafaf4;
+      --soft-orange: #fff7e8;
+      --soft-red: #fff0f2;
+      --red: #b42318;
+      --green: #027a48;
+      --orange: #b54708;
+      --shadow: 0 16px 45px rgba(16, 32, 51, 0.10);
+      --radius-xl: 28px;
+      --radius: 18px;
+      --radius-sm: 12px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(16, 163, 127, 0.20), transparent 34rem),
+        radial-gradient(circle at top right, rgba(11, 93, 143, 0.20), transparent 32rem),
+        linear-gradient(180deg, #f9fbff 0%, var(--bg) 42%, #f7fafc 100%);
+      line-height: 1.5;
+    }
+
+    a {
+      color: var(--brand);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: -999px;
+      top: 10px;
+      background: #fff;
+      color: var(--ink);
+      padding: 10px 12px;
+      border-radius: 10px;
+      z-index: 100;
+    }
+
+    .skip-link:focus {
+      left: 10px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255,255,255,0.84);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(217,227,236,0.85);
+    }
+
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .logo-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: conic-gradient(from 180deg, var(--brand), var(--brand-2), var(--brand-3), var(--brand));
+      box-shadow: 0 10px 24px rgba(11, 93, 143, 0.24);
+      font-weight: 950;
+    }
+
+    nav {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    nav a {
+      color: #344054;
+      text-decoration: none;
+      font-weight: 750;
+      font-size: 0.92rem;
+      padding: 8px 10px;
+      border-radius: 999px;
+    }
+
+    nav a:hover {
+      background: var(--soft-blue);
+      color: var(--brand);
+    }
+
+    .hero {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 52px 18px 24px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.12fr) minmax(310px, 0.88fr);
+      gap: 28px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 15px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(217,227,236,0.95);
+      box-shadow: 0 8px 20px rgba(16,32,51,0.06);
+      color: #37556e;
+      font-weight: 800;
+      font-size: 0.92rem;
+    }
+
+    .eyebrow-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--brand-2);
+      box-shadow: 0 0 0 5px rgba(16, 163, 127, 0.12);
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: clamp(2.3rem, 5vw, 4.6rem);
+      line-height: 0.98;
+      letter-spacing: -0.07em;
+    }
+
+    .hero-lead {
+      max-width: 720px;
+      margin: 0 0 22px;
+      font-size: clamp(1.05rem, 1.7vw, 1.24rem);
+      color: #40566d;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 24px 0 20px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 850;
+      text-decoration: none;
+      cursor: pointer;
+      color: var(--ink);
+      background: #fff;
+      box-shadow: 0 8px 20px rgba(16,32,51,0.06);
+    }
+
+    .button.primary {
+      background: linear-gradient(135deg, var(--brand), #0874ad);
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 14px 30px rgba(11, 93, 143, 0.25);
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+    }
+
+    .trust-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .trust-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border-radius: 999px;
+      padding: 7px 10px;
+      background: #fff;
+      border: 1px solid var(--line);
+      color: #40566d;
+      font-size: 0.9rem;
+      font-weight: 750;
+    }
+
+    .hero-card {
+      position: relative;
+      border-radius: var(--radius-xl);
+      padding: 22px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,0.96), rgba(255,255,255,0.75)),
+        radial-gradient(circle at 15% 15%, rgba(255,200,87,0.34), transparent 12rem);
+      border: 1px solid rgba(255,255,255,0.8);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      width: 210px;
+      height: 210px;
+      right: -85px;
+      top: -75px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(16,163,127,0.26), transparent 66%);
+    }
+
+    .mock-toolbar {
+      display: flex;
+      gap: 7px;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mock-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ff686b;
+    }
+
+    .mock-dot:nth-child(2) { background: #ffd166; }
+    .mock-dot:nth-child(3) { background: #06d6a0; }
+
+    .mock-result {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 12px;
+    }
+
+    .mock-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: center;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .mock-line strong {
+      font-size: 1.05rem;
+    }
+
+    .mock-change {
+      color: var(--green);
+      background: var(--soft-green);
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .mock-note {
+      padding: 13px 14px;
+      border-radius: 16px;
+      background: #102033;
+      color: #fff;
+      font-size: 0.95rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    section {
+      scroll-margin-top: 78px;
+    }
+
+    .section {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 24px 18px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+
+    .section h2 {
+      margin: 0;
+      font-size: clamp(1.55rem, 2.4vw, 2.3rem);
+      letter-spacing: -0.045em;
+      line-height: 1.05;
+    }
+
+    .section-subtitle {
+      margin: 8px 0 0;
+      color: var(--muted);
+      max-width: 680px;
+    }
+
+    .calculator-shell {
+      display: grid;
+      grid-template-columns: minmax(260px, 0.86fr) minmax(0, 1.42fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: rgba(255,255,255,0.88);
+      border: 1px solid rgba(217,227,236,0.94);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    .sport-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .sport-card {
+      width: 100%;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      cursor: pointer;
+      color: var(--ink);
+      text-align: left;
+      font: inherit;
+      transition: transform .14s ease, border-color .14s ease, box-shadow .14s ease;
+    }
+
+    .sport-card:hover {
+      transform: translateY(-1px);
+      border-color: rgba(11,93,143,0.45);
+      box-shadow: 0 10px 22px rgba(16,32,51,0.07);
+    }
+
+    .sport-card.active {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 4px rgba(11,93,143,0.12);
+      background: linear-gradient(180deg, #fff, var(--soft-blue));
+    }
+
+    .sport-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 5px;
+    }
+
+    .sport-name {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      font-weight: 900;
+      font-size: 1.02rem;
+    }
+
+    .sport-icon {
+      width: 33px;
+      height: 33px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: var(--soft-blue);
+      color: var(--brand);
+      font-weight: 950;
+    }
+
+    .sport-desc {
+      color: var(--muted);
+      font-size: 0.93rem;
+      margin-left: 42px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 0.78rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .tag.official { background: var(--soft-green); color: var(--green); }
+    .tag.indicative { background: var(--soft-orange); color: var(--orange); }
+    .tag.helper { background: var(--soft-blue); color: var(--brand); }
+
+    .calc-title-row {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 13px;
+    }
+
+    .calc-title-row h3 {
+      margin: 0 0 5px;
+      font-size: 1.48rem;
+      letter-spacing: -0.04em;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .notice {
+      margin: 12px 0 16px;
+      padding: 13px 14px;
+      border-radius: 16px;
+      background: var(--soft-blue);
+      color: #1c4c72;
+      border: 1px solid #c9e5fa;
+      font-size: 0.95rem;
+    }
+
+    .notice.good {
+      background: var(--soft-green);
+      color: var(--green);
+      border-color: #b7ebd3;
+    }
+
+    .notice.warn {
+      background: var(--soft-orange);
+      color: var(--orange);
+      border-color: #ffdf9b;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .tab {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 900;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      background: var(--ink);
+      color: #fff;
+      border-color: var(--ink);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 14px;
+    }
+
+    .full { grid-column: 1 / -1; }
+
+    label {
+      display: block;
+      font-weight: 850;
+      margin-bottom: 6px;
+      color: #26384c;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 13px;
+      color: var(--ink);
+      background: #fff;
+      font: inherit;
+      transition: border-color .14s ease, box-shadow .14s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 4px rgba(11,93,143,0.12);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .hint {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+    }
+
+    .choice {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 15px;
+      padding: 12px;
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .choice input {
+      width: auto;
+      margin: 0;
+      accent-color: var(--brand);
+    }
+
+    .team-card {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #fbfdff);
+      border-radius: 20px;
+      padding: 14px;
+    }
+
+    .team-card h4 {
+      margin: 0 0 12px;
+      font-size: 1.02rem;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    details {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+      padding: 12px 14px;
+    }
+
+    details summary {
+      cursor: pointer;
+      font-weight: 900;
+      color: var(--brand);
+    }
+
+    .score-grid {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 10px;
+    }
+
+    .score-box {
+      border-radius: 16px;
+      background: #f8fbfd;
+      border: 1px solid var(--line);
+      padding: 10px;
+    }
+
+    .score-box strong {
+      display: block;
+      margin-bottom: 7px;
+    }
+
+    .score-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .action-button {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 12px 16px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(16,32,51,0.05);
+    }
+
+    .action-button.primary {
+      border-color: transparent;
+      background: linear-gradient(135deg, var(--brand), #0874ad);
+      color: #fff;
+      box-shadow: 0 13px 28px rgba(11, 93, 143, 0.22);
+    }
+
+    .action-button:disabled {
+      opacity: 0.52;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .error {
+      display: none;
+      margin-top: 13px;
+      border-radius: 16px;
+      padding: 12px 14px;
+      background: var(--soft-red);
+      color: var(--red);
+      border: 1px solid #fac7cd;
+      font-weight: 800;
+    }
+
+    .results {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .result-card {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 20px;
+      padding: 15px;
+      box-shadow: 0 10px 24px rgba(16,32,51,0.04);
+    }
+
+    .result-top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .result-name {
+      font-size: 1.06rem;
+      font-weight: 950;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 9px;
+    }
+
+    .metric {
+      border-radius: 15px;
+      background: #f7fafc;
+      padding: 11px;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-bottom: 2px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 1.12rem;
+      letter-spacing: -0.02em;
+    }
+
+    .metric.good { background: var(--soft-green); color: var(--green); }
+    .metric.bad { background: var(--soft-red); color: var(--red); }
+    .metric.neutral { background: var(--soft-orange); color: var(--orange); }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 14px;
+    }
+
+    .seo-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: 0 12px 30px rgba(16,32,51,0.05);
+    }
+
+    .seo-card h3 {
+      margin: 0 0 8px;
+      font-size: 1.12rem;
+    }
+
+    .seo-card p {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .keyword-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .keyword-list a {
+      display: inline-flex;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      text-decoration: none;
+      color: #40566d;
+      font-weight: 750;
+      font-size: 0.92rem;
+    }
+
+    .history-head {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .history-head h3 {
+      margin: 0 0 2px;
+      font-size: 1.25rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      padding: 10px 8px;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f8fbfd;
+      color: #344054;
+      font-weight: 900;
+    }
+
+    .faq {
+      display: grid;
+      gap: 10px;
+    }
+
+    .faq details {
+      padding: 16px 18px;
+    }
+
+    footer {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 22px 18px 42px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .footer-box {
+      border-top: 1px solid var(--line);
+      padding-top: 18px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 960px) {
+      .hero,
+      .calculator-shell,
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      nav {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 34px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .topbar-inner,
+      .hero,
+      .section,
+      footer {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .panel {
+        padding: 15px;
+        border-radius: 22px;
+      }
+
+      .form-grid,
+      .choice-grid,
+      .metrics,
+      .score-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-card {
+        padding: 16px;
+      }
+
+      .section-head {
+        display: block;
+      }
+
+      .logo span:last-child {
+        display: none;
+      }
+    }
+
+    @media print {
+      .topbar,
+      .hero,
+      .sport-grid,
+      .actions,
+      .section:not(#calculator-section),
+      footer {
+        display: none !important;
+      }
+
+      body {
+        background: #fff;
+      }
+
+      .calculator-shell {
+        display: block;
+      }
+
+      .panel {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <a class="skip-link" href="#calculator-section">Naar de calculator</a>
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <a class="logo" href="#top" aria-label="RacketRating Calculator">
+        <span class="logo-mark">R</span>
+        <span>RacketRating Calculator</span>
+      </a>
+      <nav aria-label="Hoofdnavigatie">
+        <a href="#calculator-section">Calculator</a>
+        <a href="#tennis-rating-berekenen">Tennisrating</a>
+        <a href="#toernooi-rating-simulator">Toernooi</a>
+        <a href="#veelgestelde-vragen">FAQ</a>
+      </nav>
+    </div>
+  </div>
+
+  <header id="top" class="hero">
+    <div>
+      <div class="eyebrow"><span class="eyebrow-dot"></span>Rating rekentool voor racketsporters</div>
+      <h1>Bereken je KNLTB rating en racketrating na elke wedstrijd.</h1>
+      <p class="hero-lead">
+        Geen formules, geen Excel-gedoe. Kies je sport, vul de spelers in en zie direct wat winst of verlies doet met je rating.
+        Handig voor tennis, padel, dubbelspel en toernooien.
+      </p>
+      <div class="hero-actions">
+        <a class="button primary" href="#calculator-section">Start met berekenen</a>
+        <a class="button" href="#toernooi-rating-simulator">Bekijk toernooi-inzicht</a>
+      </div>
+      <div class="trust-row" aria-label="Belangrijkste voordelen">
+        <span class="trust-pill">KNLTB DSS voor tennis</span>
+        <span class="trust-pill">Enkel en dubbel</span>
+        <span class="trust-pill">Mobielvriendelijk</span>
+        <span class="trust-pill">Geen account nodig</span>
+      </div>
+    </div>
+
+    <div class="hero-card" aria-label="Voorbeeld ratingberekening">
+      <div class="mock-toolbar"><span class="mock-dot"></span><span class="mock-dot"></span><span class="mock-dot"></span></div>
+      <div class="mock-result">
+        <div class="mock-line">
+          <div>
+            <span class="muted">Tennisrating vóór</span><br>
+            <strong>6,0000</strong>
+          </div>
+          <span class="mock-change">winst</span>
+        </div>
+        <div class="mock-line">
+          <div>
+            <span class="muted">Nieuwe rating</span><br>
+            <strong>5,9210</strong>
+          </div>
+          <span class="mock-change">-0,0790</span>
+        </div>
+        <div class="mock-note">
+          Tijdens een toernooi kun je zo partij voor partij zien hoe je rating verandert, ook voordat de officiële rating is bijgewerkt.
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="calculator-section" class="section">
+      <div class="section-head">
+        <div>
+          <h2>Rating calculator</h2>
+          <p class="section-subtitle">Begin met je sport. De tool past de invoervelden automatisch aan, zodat je alleen ziet wat je nodig hebt.</p>
+        </div>
+      </div>
+
+      <div class="calculator-shell">
+        <aside class="panel" aria-label="Sport kiezen">
+          <h3 style="margin-top:0;">Welke sport speel je?</h3>
+          <div class="sport-grid" id="sportList"></div>
+        </aside>
+
+        <section class="panel" aria-label="Rating berekenen">
+          <div id="calculator"></div>
+
+          <div class="history-head">
+            <div>
+              <h3>Opgeslagen berekeningen</h3>
+              <div class="muted">Alleen lokaal in je browser. Er wordt niets naar een server gestuurd.</div>
+            </div>
+            <div class="actions" style="margin-top:0;">
+              <button class="action-button" id="exportHistory">Exporteer CSV</button>
+              <button class="action-button" id="clearHistory">Wis historie</button>
+            </div>
+          </div>
+          <div id="historyTable" style="margin-top:12px;"></div>
+        </section>
+      </div>
+    </section>
+
+    <section id="tennis-rating-berekenen" class="section">
+      <div class="section-head">
+        <div>
+          <h2>KNLTB rating berekenen zonder gedoe</h2>
+          <p class="section-subtitle">
+            Zoek je op “KNLTB rating berekenen”, “tennisrating berekenen” of “DSS rating calculator”? Deze tool is gemaakt voor spelers die snel willen weten wat een wedstrijd met hun rating doet.
+          </p>
+        </div>
+      </div>
+
+      <div class="content-grid">
+        <article class="seo-card">
+          <h3>Voor enkelspel</h3>
+          <p>Vul jouw rating, de rating van je tegenstander en de winnaar in. De calculator toont direct je rating vóór en na de partij.</p>
+        </article>
+        <article class="seo-card">
+          <h3>Voor dubbelspel</h3>
+          <p>Vul vier spelers in. De tool rekent met de teams en laat per speler zien wat het verschil is.</p>
+        </article>
+        <article class="seo-card">
+          <h3>Voor toernooien</h3>
+          <p>Gebruik de berekeningen partij voor partij om te zien hoe je rating gedurende een toernooi verandert.</p>
+        </article>
+      </div>
+
+      <div class="keyword-list" aria-label="Populaire zoekopdrachten">
+        <a href="#calculator-section">KNLTB rating berekenen</a>
+        <a href="#calculator-section">tennisrating berekenen</a>
+        <a href="#calculator-section">DSS rating calculator</a>
+        <a href="#calculator-section">dubbel rating berekenen</a>
+        <a href="#calculator-section">padel rating berekenen</a>
+        <a href="#calculator-section">racket rating rekentool</a>
+      </div>
+    </section>
+
+    <section id="toernooi-rating-simulator" class="section">
+      <div class="section-head">
+        <div>
+          <h2>Toernooi-inzicht: je rating verandert al vóór de officiële update</h2>
+          <p class="section-subtitle">
+            Binnen een toernooi kan je feitelijke rating na een gespeelde partij al anders zijn dan wat je op dat moment officieel ziet. Met deze tool kun je iedere partij direct doorrekenen en het effect volgen.
+          </p>
+        </div>
+      </div>
+
+      <div class="content-grid">
+        <article class="seo-card">
+          <h3>1. Start met je huidige rating</h3>
+          <p>Neem de rating waarmee je het toernooi ingaat als vertrekpunt.</p>
+        </article>
+        <article class="seo-card">
+          <h3>2. Reken partij voor partij door</h3>
+          <p>Na elke wedstrijd gebruik je de berekende nieuwe rating als invoer voor je volgende partij.</p>
+        </article>
+        <article class="seo-card">
+          <h3>3. Bewaar je verloop</h3>
+          <p>Sla berekeningen op en exporteer ze naar CSV voor je eigen overzicht.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="veelgestelde-vragen" class="section">
+      <div class="section-head">
+        <div>
+          <h2>Veelgestelde vragen over ratings berekenen</h2>
+          <p class="section-subtitle">Korte antwoorden voor tennissers, padellers en andere racketsporters.</p>
+        </div>
+      </div>
+
+      <div class="faq">
+        <details open>
+          <summary>Is de berekende rating officieel?</summary>
+          <p>Nee. De tool is een rekentool en hulpmiddel. Alleen de officiële bond of het officiële ratingsysteem bepaalt de definitieve rating.</p>
+        </details>
+        <details>
+          <summary>Waarom staat er soms “indicatie”?</summary>
+          <p>Sommige sporten gebruiken een complex of niet volledig openbaar model. Dan rekent de app bewust indicatief en zegt dat duidelijk in beeld.</p>
+        </details>
+        <details>
+          <summary>Kan ik mijn rating tijdens een toernooi volgen?</summary>
+          <p>Ja. Reken elke gespeelde partij door en gebruik de nieuwe berekende rating als invoer voor de volgende partij.</p>
+        </details>
+        <details>
+          <summary>Welke zoektermen passen bij deze tool?</summary>
+          <p>Bijvoorbeeld: KNLTB rating berekenen, tennisrating berekenen, DSS rating calculator, padel rating berekenen, dubbel rating berekenen en racketrating calculator.</p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-box">
+      <div>
+        <strong>RacketRating Calculator</strong><br>
+        Bereken je tennisrating, padelrating en racketrating na winst of verlies.
+      </div>
+      <div>
+        Publicatie-tip: vervang de canonical URL en structured-data URL door je echte domeinnaam.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const SPORTS = {
+      tennis: {
+        name: "Tennis",
+        icon: "T",
+        tag: "Officieel DSS",
+        tagClass: "official",
+        desc: "KNLTB enkel en dubbel. Lager cijfer = sterker.",
+        model: "knltb"
+      },
+      padel: {
+        name: "Padel",
+        icon: "P",
+        tag: "Indicatie",
+        tagClass: "indicative",
+        desc: "Padelrating met optionele gamestand.",
+        model: "padel"
+      },
+      tabletennis: {
+        name: "Tafeltennis",
+        icon: "TT",
+        tag: "Puntentabel",
+        tagClass: "official",
+        desc: "NTTB-achtige puntenberekening. Hoger = sterker.",
+        model: "nttb"
+      },
+      squash: {
+        name: "Squash",
+        icon: "S",
+        tag: "Indicatie",
+        tagClass: "indicative",
+        desc: "Level-indicatie. Hoger = sterker.",
+        model: "elo"
+      },
+      badminton: {
+        name: "Badminton",
+        icon: "B",
+        tag: "Puntentool",
+        tagClass: "helper",
+        desc: "Beste scores optellen voor ranglijstinzicht.",
+        model: "badminton"
+      },
+      pickleball: {
+        name: "Pickleball",
+        icon: "PB",
+        tag: "Indicatie",
+        tagClass: "indicative",
+        desc: "DUPR-achtige indicatie. Hoger = sterker.",
+        model: "dupr"
+      }
+    };
+
+    const DSS_K = 0.275;
+    const DSS_Q_SINGLE = 1.824;
+    const DSS_Q_DOUBLE = 2.012;
+    const STORAGE_KEY = "racket_rating_calculator_history_v3";
+
+    const nttbExpected = [
+      { min: 301, max: Infinity, values: [0,0,1,1,1,1] },
+      { min: 270, max: 300, values: [1,1,1,2,2,2] },
+      { min: 240, max: 269, values: [1,2,3,3,4,4] },
+      { min: 210, max: 239, values: [1,2,3,3,4,4] },
+      { min: 180, max: 209, values: [2,3,4,5,5,6] },
+      { min: 150, max: 179, values: [2,3,4,5,5,6] },
+      { min: 120, max: 149, values: [2,4,5,6,7,8] },
+      { min: 90, max: 119, values: [3,5,6,8,9,10] },
+      { min: 60, max: 89, values: [3,6,8,9,11,12] },
+      { min: 30, max: 59, values: [4,7,9,11,12,14] },
+      { min: 15, max: 29, values: [4,7,9,11,12,14] },
+      { min: 0, max: 14, values: [4,8,10,12,14,16] }
+    ];
+
+    const nttbUnexpected = [
+      { min: 0, max: 14, values: [4,8,10,12,14,16] },
+      { min: 15, max: 29, values: [5,9,11,14,16,18] },
+      { min: 30, max: 59, values: [5,10,13,15,18,20] },
+      { min: 60, max: 89, values: [7,13,16,20,23,26] },
+      { min: 90, max: 119, values: [9,17,21,26,30,34] },
+      { min: 120, max: 149, values: [11,21,26,32,37,42] },
+      { min: 150, max: 179, values: [13,26,33,39,46,52] },
+      { min: 180, max: 209, values: [16,32,40,48,56,64] },
+      { min: 210, max: 239, values: [20,39,49,59,68,78] },
+      { min: 240, max: 269, values: [23,46,58,69,81,92] },
+      { min: 270, max: 299, values: [28,55,69,83,96,110] },
+      { min: 300, max: Infinity, values: [32,63,79,95,110,126] }
+    ];
+
+    let activeSport = "tennis";
+    let matchKind = "single";
+    let lastResult = null;
+
+    function init() {
+      renderSportList();
+      renderCalculator();
+      renderHistory();
+
+      document.getElementById("exportHistory").addEventListener("click", exportHistory);
+      document.getElementById("clearHistory").addEventListener("click", () => {
+        if (confirm("Wil je de opgeslagen berekeningen wissen?")) {
+          localStorage.removeItem(STORAGE_KEY);
+          renderHistory();
+        }
+      });
+    }
+
+    function renderSportList() {
+      const list = document.getElementById("sportList");
+      list.innerHTML = Object.entries(SPORTS).map(([key, s]) => `
+        <button class="sport-card ${key === activeSport ? "active" : ""}" data-sport="${key}" type="button">
+          <span class="sport-card-top">
+            <span class="sport-name"><span class="sport-icon">${s.icon}</span>${s.name}</span>
+            <span class="tag ${s.tagClass}">${s.tag}</span>
+          </span>
+          <span class="sport-desc">${s.desc}</span>
+        </button>
+      `).join("");
+
+      list.querySelectorAll("[data-sport]").forEach(button => {
+        button.addEventListener("click", () => {
+          activeSport = button.dataset.sport;
+          matchKind = ["tennis", "pickleball"].includes(activeSport) ? "single" : "double";
+          lastResult = null;
+          renderSportList();
+          renderCalculator();
+        });
+      });
+    }
+
+    function renderCalculator() {
+      const s = SPORTS[activeSport];
+      const target = document.getElementById("calculator");
+      let html = `
+        <div class="calc-title-row">
+          <div>
+            <h3>${s.name} rating berekenen</h3>
+            <div class="muted">${s.desc}</div>
+          </div>
+          <span class="tag ${s.tagClass}">${s.tag}</span>
+        </div>
+      `;
+
+      if (s.model === "knltb") html += renderTennis();
+      if (s.model === "padel") html += renderPadel();
+      if (s.model === "nttb") html += renderTabletennis();
+      if (s.model === "elo") html += renderElo();
+      if (s.model === "badminton") html += renderBadminton();
+      if (s.model === "dupr") html += renderPickleball();
+
+      target.innerHTML = html;
+      bindCalcEvents();
+    }
+
+    function renderTennis() {
+      return `
+        <div class="notice good">Tennis gebruikt de KNLTB DSS-logica. Bij tennis is een lager ratinggetal beter.</div>
+        ${matchTabs(["single", "double"])}
+        ${matchKind === "single" ? singleForm("tennis", "Rating", "6,0000", "6,5000", true) : doubleForm("tennis", "Rating", "5,0000", "6,0000", "5,8000", "4,8000", false, true)}
+        ${actionArea("Bereken tennisrating")}
+      `;
+    }
+
+    function renderPadel() {
+      return `
+        <div class="notice warn">Padel is opgenomen als indicatie. De officiële padelrating kan door extra factoren afwijken.</div>
+        ${doubleForm("padel", "Padelrating", "5,0000", "6,0000", "5,8000", "4,8000", true, true)}
+        ${optionalScore("Optioneel: vul de games in", "Games thuis", "Games uit")}
+        ${actionArea("Bereken padelindicatie")}
+      `;
+    }
+
+    function renderTabletennis() {
+      return `
+        <div class="notice good">Bij tafeltennis is een hoger puntenaantal beter. Kies het soort wedstrijd en vul de winnaar in.</div>
+        <div class="form-grid">
+          ${field("ttAName", "Speler 1", "Speler 1")}
+          ${field("ttBName", "Speler 2", "Speler 2")}
+          ${field("ttARating", "Ratingpunten speler 1", "900", "numeric")}
+          ${field("ttBRating", "Ratingpunten speler 2", "820", "numeric")}
+          <div class="full">
+            <label for="ttWeight">Soort wedstrijd</label>
+            <select id="ttWeight">
+              <option value="0">R0 - klein / lokaal</option>
+              <option value="1" selected>R1 - competitie</option>
+              <option value="2">R2 - regionaal toernooi</option>
+              <option value="3">R3 - open toernooi</option>
+              <option value="4">R4 - nationaal</option>
+              <option value="5">R5 - hoogste gewicht</option>
+            </select>
+            <div class="hint">Twijfel je? Kies voor een gewone competitiewedstrijd R1.</div>
+          </div>
+          ${winnerChoices("Speler 1 won", "Speler 2 won")}
+        </div>
+        ${actionArea("Bereken tafeltennisrating")}
+      `;
+    }
+
+    function renderElo() {
+      return `
+        <div class="notice warn">Squash is opgenomen als indicatie. Officiële systemen kunnen meer factoren gebruiken dan alleen winst, verlies en verschil in rating.</div>
+        <div class="form-grid">
+          ${field("eloAName", "Speler 1", "Speler 1")}
+          ${field("eloBName", "Speler 2", "Speler 2")}
+          ${field("eloARating", "Rating / level speler 1", "1200", "numeric")}
+          ${field("eloBRating", "Rating / level speler 2", "1100", "numeric")}
+          <div class="full">
+            <label for="eloEffect">Effect van deze wedstrijd</label>
+            <select id="eloEffect">
+              <option value="16">Klein effect</option>
+              <option value="24" selected>Normaal effect</option>
+              <option value="32">Groot effect</option>
+            </select>
+          </div>
+          ${winnerChoices("Speler 1 won", "Speler 2 won")}
+        </div>
+        ${optionalScore("Optioneel: vul games of punten in", "Speler 1", "Speler 2")}
+        ${actionArea("Bereken indicatie")}
+      `;
+    }
+
+    function renderBadminton() {
+      return `
+        <div class="notice">Badminton werkt vooral met ranglijstpunten. Deze tool telt de beste scores op en laat zien wat een nieuwe score doet.</div>
+        <div class="form-grid">
+          ${field("badName", "Speler", "Speler")}
+          ${field("badNew", "Nieuwe score", "450", "numeric")}
+          <div class="full">
+            <label for="badScores">Huidige scores</label>
+            <textarea id="badScores">620
+540
+480
+420
+390
+360
+310
+280
+240
+200
+160</textarea>
+            <div class="hint">Zet elke score op een nieuwe regel of scheid scores met komma's.</div>
+          </div>
+        </div>
+        ${actionArea("Bereken puntentotaal")}
+      `;
+    }
+
+    function renderPickleball() {
+      return `
+        <div class="notice warn">Pickleball is opgenomen als DUPR-achtige indicatie. De officiële DUPR-rating kan afwijken.</div>
+        ${matchTabs(["single", "double"])}
+        ${matchKind === "single" ? singleForm("pb", "Rating", "3,500", "3,300", false) : doubleForm("pb", "Rating", "3,500", "3,300", "3,700", "3,200", false, false)}
+        ${optionalScore("Optioneel: vul de punten in", matchKind === "single" ? "Speler 1" : "Team thuis", matchKind === "single" ? "Speler 2" : "Team uit")}
+        ${actionArea("Bereken indicatie")}
+      `;
+    }
+
+    function matchTabs(types) {
+      const labels = { single: "Enkelspel", double: "Dubbelspel" };
+      return `<div class="tabs">${types.map(t => `<button type="button" class="tab ${matchKind === t ? "active" : ""}" data-kind="${t}">${labels[t]}</button>`).join("")}</div>`;
+    }
+
+    function field(id, label, value, mode = "text") {
+      return `
+        <div>
+          <label for="${id}">${label}</label>
+          <input id="${id}" value="${value}" inputmode="${mode}" autocomplete="off">
+        </div>
+      `;
+    }
+
+    function singleForm(prefix, ratingLabel, rA, rB, lowerIsBetter) {
+      return `
+        <div class="form-grid">
+          ${field(`${prefix}AName`, "Speler 1", "Speler 1")}
+          ${field(`${prefix}BName`, "Speler 2", "Speler 2")}
+          ${field(`${prefix}ARating`, `${ratingLabel} speler 1`, rA, "decimal")}
+          ${field(`${prefix}BRating`, `${ratingLabel} speler 2`, rB, "decimal")}
+          <div class="full"><div class="hint">${lowerIsBetter ? "Bij deze sport betekent een lager ratinggetal meestal dat je sterker bent." : "Bij deze sport betekent een hoger ratinggetal meestal dat je sterker bent."}</div></div>
+          ${winnerChoices("Speler 1 won", "Speler 2 won")}
+        </div>
+      `;
+    }
+
+    function doubleForm(prefix, ratingLabel, a1, a2, b1, b2, showGender, lowerIsBetter) {
+      return `
+        <div class="form-grid">
+          <div class="team-card">
+            <h4>Team thuis</h4>
+            <div class="team-grid">
+              ${field(`${prefix}A1Name`, "Speler 1", "Thuis speler 1")}
+              ${field(`${prefix}A1Rating`, `${ratingLabel} speler 1`, a1, "decimal")}
+              ${showGender ? gender(`${prefix}A1Gender`, "Geslacht speler 1") : ""}
+              ${field(`${prefix}A2Name`, "Speler 2", "Thuis speler 2")}
+              ${field(`${prefix}A2Rating`, `${ratingLabel} speler 2`, a2, "decimal")}
+              ${showGender ? gender(`${prefix}A2Gender`, "Geslacht speler 2") : ""}
+            </div>
+          </div>
+          <div class="team-card">
+            <h4>Team uit</h4>
+            <div class="team-grid">
+              ${field(`${prefix}B1Name`, "Speler 1", "Uit speler 1")}
+              ${field(`${prefix}B1Rating`, `${ratingLabel} speler 1`, b1, "decimal")}
+              ${showGender ? gender(`${prefix}B1Gender`, "Geslacht speler 1") : ""}
+              ${field(`${prefix}B2Name`, "Speler 2", "Uit speler 2")}
+              ${field(`${prefix}B2Rating`, `${ratingLabel} speler 2`, b2, "decimal")}
+              ${showGender ? gender(`${prefix}B2Gender`, "Geslacht speler 2") : ""}
+            </div>
+          </div>
+          <div class="full"><div class="hint">${lowerIsBetter ? "Bij deze sport betekent een lager ratinggetal meestal dat je sterker bent." : "Bij deze sport betekent een hoger ratinggetal meestal dat je sterker bent."}</div></div>
+          ${winnerChoices("Team thuis won", "Team uit won")}
+        </div>
+      `;
+    }
+
+    function gender(id, label) {
+      return `
+        <div>
+          <label for="${id}">${label}</label>
+          <select id="${id}">
+            <option value="M">Man</option>
+            <option value="V">Vrouw</option>
+          </select>
+        </div>
+      `;
+    }
+
+    function winnerChoices(a, b) {
+      return `
+        <div class="full">
+          <label>Wie won de wedstrijd?</label>
+          <div class="choice-grid">
+            <label class="choice"><input type="radio" name="winner" value="A" checked>${a}</label>
+            <label class="choice"><input type="radio" name="winner" value="B">${b}</label>
+          </div>
+        </div>
+      `;
+    }
+
+    function optionalScore(title, aLabel, bLabel) {
+      return `
+        <details class="full" style="margin-top:14px;">
+          <summary>${title}</summary>
+          <div class="score-grid">
+            ${[1,2,3].map(i => `
+              <div class="score-box">
+                <strong>Set ${i}</strong>
+                <div class="score-pair">
+                  <div>
+                    <label for="scoreA${i}">${aLabel}</label>
+                    <input id="scoreA${i}" inputmode="numeric" placeholder="6">
+                  </div>
+                  <div>
+                    <label for="scoreB${i}">${bLabel}</label>
+                    <input id="scoreB${i}" inputmode="numeric" placeholder="4">
+                  </div>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        </details>
+      `;
+    }
+
+    function actionArea(label) {
+      return `
+        <div class="actions">
+          <button class="action-button primary" id="calculate">${label}</button>
+          <button class="action-button" id="saveResult" disabled>Sla resultaat op</button>
+          <button class="action-button" id="printResult">Print</button>
+        </div>
+        <div class="error" id="error"></div>
+        <div class="results" id="results"></div>
+      `;
+    }
+
+    function bindCalcEvents() {
+      document.querySelectorAll("[data-kind]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          matchKind = btn.dataset.kind;
+          lastResult = null;
+          renderCalculator();
+        });
+      });
+
+      document.getElementById("calculate")?.addEventListener("click", calculate);
+      document.getElementById("printResult")?.addEventListener("click", () => window.print());
+      document.getElementById("saveResult")?.addEventListener("click", saveLastResult);
+    }
+
+    function calculate() {
+      hideError();
+      try {
+        const model = SPORTS[activeSport].model;
+        let calc;
+        if (model === "knltb") calc = matchKind === "single" ? calcLowerSingle("tennis", "Tennis", "Officieel DSS", DSS_Q_SINGLE, false) : calcLowerDouble("tennis", "Tennis", "Officieel DSS", false);
+        if (model === "padel") calc = calcLowerDouble("padel", "Padel", "Indicatie", true);
+        if (model === "nttb") calc = calcNttb();
+        if (model === "elo") calc = calcElo();
+        if (model === "badminton") calc = calcBadminton();
+        if (model === "dupr") calc = matchKind === "single" ? calcDuprSingle() : calcDuprDouble();
+
+        lastResult = calc;
+        document.getElementById("results").innerHTML = renderResult(calc);
+        document.getElementById("saveResult").disabled = false;
+      } catch (err) {
+        showError(err.message || "Controleer de ingevulde gegevens.");
+      }
+    }
+
+    function calcLowerSingle(prefix, sport, status, q, useScore) {
+      const aName = get(`${prefix}AName`) || "Speler 1";
+      const bName = get(`${prefix}BName`) || "Speler 2";
+      const a = parseNumber(get(`${prefix}ARating`), "Rating speler 1", 0, 10);
+      const b = parseNumber(get(`${prefix}BRating`), "Rating speler 2", 0, 10);
+      const winner = getWinner();
+      const pA = dssExpected(a, b, q);
+      const pB = 1 - pA;
+      const rA = winner === "A" ? 1 : 0;
+      const rB = winner === "B" ? 1 : 0;
+      const newA = a + DSS_K * (pA - rA);
+      const newB = b + DSS_K * (pB - rB);
+
+      return baseResult(sport, status, `${aName} - ${bName}`, "lower", [
+        makeRow(aName, a, newA, pA, winner === "A"),
+        makeRow(bName, b, newB, pB, winner === "B")
+      ], "Lager is beter. Bij winst daalt je rating meestal; bij verlies stijgt je rating meestal.");
+    }
+
+    function calcLowerDouble(prefix, sport, status, useScore) {
+      const names = {
+        a1: get(`${prefix}A1Name`) || "Thuis speler 1",
+        a2: get(`${prefix}A2Name`) || "Thuis speler 2",
+        b1: get(`${prefix}B1Name`) || "Uit speler 1",
+        b2: get(`${prefix}B2Name`) || "Uit speler 2"
+      };
+      const r = {
+        a1: parseNumber(get(`${prefix}A1Rating`), "Rating thuis speler 1", 0, 10),
+        a2: parseNumber(get(`${prefix}A2Rating`), "Rating thuis speler 2", 0, 10),
+        b1: parseNumber(get(`${prefix}B1Rating`), "Rating uit speler 1", 0, 10),
+        b2: parseNumber(get(`${prefix}B2Rating`), "Rating uit speler 2", 0, 10)
+      };
+      const winner = getWinner();
+      const teamA = (r.a1 + r.a2) / 2;
+      const teamB = (r.b1 + r.b2) / 2;
+      const pA = dssExpected(teamA, teamB, DSS_Q_DOUBLE);
+      const pB = 1 - pA;
+
+      let resultA = winner === "A" ? 1 : 0;
+      let resultB = winner === "B" ? 1 : 0;
+      let scoreText = "";
+
+      if (useScore) {
+        const score = readScore();
+        if (score.total > 0) {
+          resultA = clamp(score.a / score.total, 0.05, 0.95);
+          resultB = clamp(score.b / score.total, 0.05, 0.95);
+          scoreText = " De ingevulde games zijn meegenomen als indicatie van hoe ruim de uitslag was.";
+        }
+      }
+
+      const deltaA = DSS_K * (pA - resultA);
+      const deltaB = DSS_K * (pB - resultB);
+
+      return {
+        ...baseResult(sport, status, `${names.a1} / ${names.a2} - ${names.b1} / ${names.b2}`, "lower", [
+          makeRow(names.a1, r.a1, r.a1 + deltaA, pA, winner === "A"),
+          makeRow(names.a2, r.a2, r.a2 + deltaA, pA, winner === "A"),
+          makeRow(names.b1, r.b1, r.b1 + deltaB, pB, winner === "B"),
+          makeRow(names.b2, r.b2, r.b2 + deltaB, pB, winner === "B")
+        ], `Lager is beter. Beide spelers binnen hetzelfde koppel krijgen dezelfde ratingwijziging.${scoreText}`),
+        extra: [
+          { label: "Team thuis gemiddeld", value: fmt(teamA, 4) },
+          { label: "Team uit gemiddeld", value: fmt(teamB, 4) }
+        ]
+      };
+    }
+
+    function calcNttb() {
+      const aName = get("ttAName") || "Speler 1";
+      const bName = get("ttBName") || "Speler 2";
+      const a = parseNumber(get("ttARating"), "Ratingpunten speler 1", 0, 5000);
+      const b = parseNumber(get("ttBRating"), "Ratingpunten speler 2", 0, 5000);
+      const winner = getWinner();
+      const col = Number(get("ttWeight"));
+      const diff = Math.abs(a - b);
+      const higherWins = (a >= b && winner === "A") || (b >= a && winner === "B");
+      const table = higherWins ? nttbExpected : nttbUnexpected;
+      const row = table.find(x => diff >= x.min && diff <= x.max);
+      const winnerGain = row.values[col];
+      const loserLoss = row.values[col === 0 ? 0 : 1];
+
+      const newA = winner === "A" ? a + winnerGain : a - loserLoss;
+      const newB = winner === "B" ? b + winnerGain : b - loserLoss;
+
+      return {
+        ...baseResult("Tafeltennis", "Puntentabel", `${aName} - ${bName}`, "higher", [
+          makeRow(aName, a, newA, null, winner === "A"),
+          makeRow(bName, b, newB, null, winner === "B")
+        ], "Hoger is beter. De winnaar krijgt punten erbij; de verliezer levert punten in."),
+        extra: [
+          { label: "Ratingverschil", value: Math.round(diff).toString() },
+          { label: "Winnaar", value: `+${winnerGain}` },
+          { label: "Verliezer", value: `-${loserLoss}` }
+        ]
+      };
+    }
+
+    function calcElo() {
+      const aName = get("eloAName") || "Speler 1";
+      const bName = get("eloBName") || "Speler 2";
+      const a = parseNumber(get("eloARating"), "Rating speler 1", 0, 100000);
+      const b = parseNumber(get("eloBRating"), "Rating speler 2", 0, 100000);
+      const k = Number(get("eloEffect"));
+      return calcHigherIndication("Squash", `${aName} - ${bName}`, aName, bName, a, b, k, "Hoger is beter. Deze berekening is een indicatie.");
+    }
+
+    function calcDuprSingle() {
+      const aName = get("pbAName") || "Speler 1";
+      const bName = get("pbBName") || "Speler 2";
+      const a = parseNumber(get("pbARating"), "Rating speler 1", 0, 10);
+      const b = parseNumber(get("pbBRating"), "Rating speler 2", 0, 10);
+      return calcHigherIndication("Pickleball", `${aName} - ${bName}`, aName, bName, a, b, 0.045, "Hoger is beter. Deze berekening is een DUPR-achtige indicatie.", true);
+    }
+
+    function calcDuprDouble() {
+      const names = {
+        a1: get("pbA1Name") || "Thuis speler 1",
+        a2: get("pbA2Name") || "Thuis speler 2",
+        b1: get("pbB1Name") || "Uit speler 1",
+        b2: get("pbB2Name") || "Uit speler 2"
+      };
+      const r = {
+        a1: parseNumber(get("pbA1Rating"), "Rating thuis speler 1", 0, 10),
+        a2: parseNumber(get("pbA2Rating"), "Rating thuis speler 2", 0, 10),
+        b1: parseNumber(get("pbB1Rating"), "Rating uit speler 1", 0, 10),
+        b2: parseNumber(get("pbB2Rating"), "Rating uit speler 2", 0, 10)
+      };
+      const winner = getWinner();
+      const teamA = (r.a1 + r.a2) / 2;
+      const teamB = (r.b1 + r.b2) / 2;
+      const pA = eloExpected(teamA * 1000, teamB * 1000);
+      const pB = 1 - pA;
+      let resultA = winner === "A" ? 1 : 0;
+      let resultB = winner === "B" ? 1 : 0;
+      const score = readScore();
+      let note = "";
+      if (score.total > 0) {
+        resultA = clamp(score.a / score.total, 0.05, 0.95);
+        resultB = clamp(score.b / score.total, 0.05, 0.95);
+        note = " De ingevulde punten zijn meegenomen als indicatie van hoe ruim de uitslag was.";
+      }
+      const dA = 0.045 * (resultA - pA);
+      const dB = 0.045 * (resultB - pB);
+
+      return {
+        ...baseResult("Pickleball", "Indicatie", `${names.a1} / ${names.a2} - ${names.b1} / ${names.b2}`, "higher", [
+          makeRow(names.a1, r.a1, r.a1 + dA, pA, winner === "A"),
+          makeRow(names.a2, r.a2, r.a2 + dA, pA, winner === "A"),
+          makeRow(names.b1, r.b1, r.b1 + dB, pB, winner === "B"),
+          makeRow(names.b2, r.b2, r.b2 + dB, pB, winner === "B")
+        ], `Hoger is beter. Deze berekening is een DUPR-achtige indicatie.${note}`),
+        extra: [
+          { label: "Team thuis gemiddeld", value: fmt(teamA, 3) },
+          { label: "Team uit gemiddeld", value: fmt(teamB, 3) }
+        ]
+      };
+    }
+
+    function calcHigherIndication(sport, summary, aName, bName, a, b, k, text, scale1000 = false) {
+      const winner = getWinner();
+      const pA = scale1000 ? eloExpected(a * 1000, b * 1000) : eloExpected(a, b);
+      const pB = 1 - pA;
+      let resultA = winner === "A" ? 1 : 0;
+      let resultB = winner === "B" ? 1 : 0;
+      const score = readScore();
+      let note = "";
+      if (score.total > 0) {
+        resultA = clamp(score.a / score.total, 0.05, 0.95);
+        resultB = clamp(score.b / score.total, 0.05, 0.95);
+        note = " De score is meegenomen als indicatie van hoe ruim de uitslag was.";
+      }
+      const newA = a + k * (resultA - pA);
+      const newB = b + k * (resultB - pB);
+      return baseResult(sport, "Indicatie", summary, "higher", [
+        makeRow(aName, a, newA, pA, winner === "A"),
+        makeRow(bName, b, newB, pB, winner === "B")
+      ], text + note);
+    }
+
+    function calcBadminton() {
+      const name = get("badName") || "Speler";
+      const newScore = parseNumber(get("badNew"), "Nieuwe score", 0, 100000);
+      const scores = get("badScores").split(/[\s,;]+/).filter(Boolean).map(v => parseNumber(v, "Een van de huidige scores", 0, 100000));
+      if (!scores.length) throw new Error("Vul minimaal één huidige score in.");
+      const before = scores.slice().sort((a,b) => b-a).slice(0, 10);
+      const after = scores.concat([newScore]).sort((a,b) => b-a).slice(0, 10);
+      const beforeTotal = before.reduce((a,b) => a+b, 0);
+      const afterTotal = after.reduce((a,b) => a+b, 0);
+
+      return {
+        ...baseResult("Badminton", "Puntentool", name, "higher", [
+          makeRow(name, beforeTotal, afterTotal, null, true)
+        ], "Hoger is beter. De tool telt de beste scores op als praktisch ranglijsthulpmiddel."),
+        extra: [
+          { label: "Beste scores vooraf", value: before.join(", ") },
+          { label: "Beste scores na nieuwe score", value: after.join(", ") },
+          { label: "Nieuwe score", value: Math.round(newScore).toString() }
+        ]
+      };
+    }
+
+    function baseResult(sport, status, summary, direction, rows, explanation) {
+      return {
+        id: Date.now().toString(36) + Math.random().toString(36).slice(2),
+        date: new Date().toISOString(),
+        sport,
+        status,
+        summary,
+        direction,
+        rows,
+        explanation
+      };
+    }
+
+    function makeRow(name, oldRating, newRating, probability, winner) {
+      return { name, oldRating, newRating, delta: newRating - oldRating, probability, winner };
+    }
+
+    function renderResult(calc) {
+      const extra = calc.extra ? `
+        <div class="result-card">
+          <div class="metrics">
+            ${calc.extra.map(x => `
+              <div class="metric">
+                <span>${escape(x.label)}</span>
+                <strong>${escape(x.value)}</strong>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      ` : "";
+
+      return `
+        <div class="notice ${calc.status === "Indicatie" ? "warn" : "good"}">
+          <strong>${escape(calc.sport)} - ${escape(calc.status)}</strong><br>${escape(calc.explanation)}
+        </div>
+        ${extra}
+        ${calc.rows.map(row => resultCard(row, calc)).join("")}
+      `;
+    }
+
+    function resultCard(row, calc) {
+      const precision = precisionFor(calc.sport);
+      const better = calc.direction === "lower" ? row.delta < -0.000001 : row.delta > 0.000001;
+      const worse = calc.direction === "lower" ? row.delta > 0.000001 : row.delta < -0.000001;
+      const cls = better ? "good" : worse ? "bad" : "neutral";
+      const label = better ? "Beter" : worse ? "Minder" : "Gelijk";
+      return `
+        <article class="result-card">
+          <div class="result-top">
+            <span class="result-name">${escape(row.name)}</span>
+            ${row.winner ? `<span class="tag official">Winnaar</span>` : ""}
+          </div>
+          <div class="metrics">
+            <div class="metric">
+              <span>Rating vóór</span>
+              <strong>${fmt(row.oldRating, precision)}</strong>
+            </div>
+            <div class="metric ${cls}">
+              <span>Rating na</span>
+              <strong>${fmt(row.newRating, precision)}</strong>
+              <span>${delta(row.delta, precision)} - ${label}</span>
+            </div>
+            <div class="metric">
+              <span>${row.probability === null ? "Verschil" : "Kans vooraf"}</span>
+              <strong>${row.probability === null ? delta(row.delta, precision) : pct(row.probability)}</strong>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function saveLastResult() {
+      if (!lastResult) return;
+      const history = loadHistory();
+      history.unshift(lastResult);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(0, 80)));
+      renderHistory();
+      const btn = document.getElementById("saveResult");
+      btn.textContent = "Opgeslagen";
+      setTimeout(() => { btn.textContent = "Sla resultaat op"; }, 1000);
+    }
+
+    function renderHistory() {
+      const target = document.getElementById("historyTable");
+      const history = loadHistory();
+      if (!history.length) {
+        target.innerHTML = `<p class="muted">Nog geen opgeslagen berekeningen.</p>`;
+        return;
+      }
+
+      const rows = history.map(item => {
+        const precision = precisionFor(item.sport);
+        const details = item.rows.map(r => `${escape(r.name)}: ${fmt(r.oldRating, precision)} → ${fmt(r.newRating, precision)} (${delta(r.delta, precision)})`).join("<br>");
+        return `
+          <tr>
+            <td>${new Date(item.date).toLocaleString("nl-NL")}</td>
+            <td>${escape(item.sport)}</td>
+            <td>${escape(item.summary)}</td>
+            <td>${escape(item.status)}</td>
+            <td>${details}</td>
+          </tr>
+        `;
+      }).join("");
+
+      target.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Datum</th>
+              <th>Sport</th>
+              <th>Wedstrijd</th>
+              <th>Soort</th>
+              <th>Rating</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+
+    function exportHistory() {
+      const history = loadHistory();
+      if (!history.length) {
+        alert("Er is nog geen historie om te exporteren.");
+        return;
+      }
+      const lines = ["datum;sport;wedstrijd;soort;speler;rating_voor;rating_na;verschil"];
+      history.forEach(item => {
+        const precision = precisionFor(item.sport);
+        item.rows.forEach(r => {
+          lines.push([
+            new Date(item.date).toLocaleString("nl-NL"),
+            item.sport,
+            item.summary,
+            item.status,
+            r.name,
+            fmt(r.oldRating, precision),
+            fmt(r.newRating, precision),
+            delta(r.delta, precision)
+          ].map(csv).join(";"));
+        });
+      });
+
+      const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "racketrating-calculator-historie.csv";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function loadHistory() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      } catch {
+        return [];
+      }
+    }
+
+    function parseNumber(value, label, min, max) {
+      const normalized = String(value).trim().replace(",", ".");
+      if (normalized === "") throw new Error(`${label} is verplicht.`);
+      const n = Number(normalized);
+      if (!Number.isFinite(n)) throw new Error(`${label} moet een geldig getal zijn.`);
+      if (n < min || n > max) throw new Error(`${label} lijkt buiten het verwachte bereik te vallen.`);
+      return n;
+    }
+
+    function readScore() {
+      let a = 0;
+      let b = 0;
+      for (let i = 1; i <= 3; i++) {
+        const av = get(`scoreA${i}`);
+        const bv = get(`scoreB${i}`);
+        if (!av && !bv) continue;
+        a += parseNumber(av || "0", `Score links set ${i}`, 0, 1000);
+        b += parseNumber(bv || "0", `Score rechts set ${i}`, 0, 1000);
+      }
+      return { a, b, total: a + b };
+    }
+
+    function getWinner() {
+      const checked = document.querySelector('input[name="winner"]:checked');
+      if (!checked) throw new Error("Kies wie de wedstrijd heeft gewonnen.");
+      return checked.value;
+    }
+
+    function get(id) {
+      return document.getElementById(id)?.value.trim() || "";
+    }
+
+    function showError(message) {
+      const el = document.getElementById("error");
+      el.textContent = message;
+      el.style.display = "block";
+    }
+
+    function hideError() {
+      const el = document.getElementById("error");
+      if (!el) return;
+      el.textContent = "";
+      el.style.display = "none";
+    }
+
+    function dssExpected(own, opponent, q) {
+      return 1 / (1 + Math.exp(q * (own - opponent)));
+    }
+
+    function eloExpected(own, opponent) {
+      return 1 / (1 + Math.pow(10, (opponent - own) / 400));
+    }
+
+    function clamp(n, min, max) {
+      return Math.max(min, Math.min(max, n));
+    }
+
+    function precisionFor(sport) {
+      if (sport === "Tennis" || sport === "Padel") return 4;
+      if (sport === "Pickleball") return 3;
+      return 0;
+    }
+
+    function fmt(n, digits) {
+      return Number(n).toFixed(digits).replace(".", ",");
+    }
+
+    function delta(n, digits) {
+      return `${n > 0 ? "+" : ""}${fmt(n, digits)}`;
+    }
+
+    function pct(n) {
+      return `${(n * 100).toFixed(1).replace(".", ",")}%`;
+    }
+
+    function escape(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function csv(value) {
+      return `"${String(value).replaceAll('"', '""')}"`;
+    }
+
+    init();
+  </script>
+</body>
+</html>
